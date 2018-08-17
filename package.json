@@ -2,9 +2,11 @@
   "name": "semp",
   "version": "1.0.0",
   "description": "Implementation of the SMA SEMP protocol.",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "test": "mocha test"
+    "test": "mocha --require ts-node/register ./test/*.ts",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
@@ -30,8 +32,13 @@
     "node-ssdp": "^3.3.0"
   },
   "devDependencies": {
+    "@types/chai": "^4.1.4",
+    "@types/express": "^4.16.0",
+    "@types/mocha": "^5.2.5",
     "axios": "^0.18.0",
     "chai": "^4.1.2",
-    "mocha": "^5.2.0"
+    "mocha": "^5.2.0",
+    "ts-node": "^7.0.1",
+    "typescript": "^2.9.2"
   }
 }
