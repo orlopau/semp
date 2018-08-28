@@ -2,6 +2,9 @@
  * For documentation, download the SEMP docs from SMA.
  */
 interface Device2EM {
+    _attributes: {
+        xmlns: string
+    },
     DeviceInfo: Array<DeviceInfoType>,
     DeviceStatus: Array<DeviceStatusType>,
     PlanningRequest: Array<PlanningRequestType>
@@ -75,12 +78,14 @@ interface PlanningRequestType {
     Timeframe: Array<TimeframeType>
 }
 
+
 interface TimeframeType {
     DeviceId: string,
     EarliestStart: number,
     LatestEnd: number,
-    MaxRunningTime: number
+    MaxRunningTime: number,
+    MinRunningTime: number
 }
 
 export default Device2EM;
-export {DeviceInfoType, DeviceStatusType, PlanningRequestType}
+export {DeviceInfoType, DeviceStatusType, PlanningRequestType, TimeframeType, PowerInfoType}

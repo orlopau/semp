@@ -6,7 +6,8 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "mocha --require ts-node/register ./test/*.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "example": "ts-node example.ts"
   },
   "repository": {
     "type": "git",
@@ -29,7 +30,8 @@
   "homepage": "https://github.com/orlopau/semp#readme",
   "dependencies": {
     "express": "^4.16.3",
-    "node-ssdp": "^3.3.0"
+    "node-ssdp": "^3.3.0",
+    "xml-js": "^1.6.7"
   },
   "devDependencies": {
     "@types/chai": "^4.1.4",

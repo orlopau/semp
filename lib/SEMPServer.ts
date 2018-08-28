@@ -4,43 +4,38 @@
  */
 
 import express from 'express';
-import DescriptionGenerator from './DescriptionGenerator';
-import SSDPServer from './SSDPServer';
-import * as http from "http";
+import Gateway from "./Gateway";
+import {Server} from "http";
+import Device2EM, {DeviceInfoType, DeviceStatusType, PlanningRequestType} from "./Device2EM";
+import Device from "./Device";
+import {js2xml} from "xml-js";
 
 class SEMPServer {
 
-    private readonly descriptionXml: string;
     private app: express.Application;
-    private server: http.Server | undefined;
-    private ssdpServer: SSDPServer;
+    private server: Server | undefined;
 
     /**
      * Creates a new SEMP Server instance
      * @param uuid - Globally unique uuid
      * @param ipAddress - ip address of the server
      * @param port - port to run the server on
-     * @param friendlyName - friendly name for ssdp description, defaults to "Semp Gateway"
-     * @param manufacturer - manufacturer for ssdp description, defaults to "NodeJS Gateway"
+     * @param descriptionXml Description XML string
+     * @param gateway Gateway
      */
     constructor(uuid: string,
                 ipAddress: string,
                 public port: number,
-                friendlyName: string = "Semp Gateway",
-                manufacturer: string = "NodeJS Gateway") {
+                public descriptionXml: string,
+                public gateway: Gateway) {
 
-        this.descriptionXml = DescriptionGenerator.generateDescription(uuid, "http://" + ipAddress + ":" + port, friendlyName, manufacturer);
 
         this.app = express();
-
-        this.ssdpServer = new SSDPServer("http://" + ipAddress + ":" + port + "/description.xml", uuid);
-        this.ssdpServer.start();
-
         this.initRoutes()
     }
 
     /**
-     * Initializes REST routes
+     * Initializes SEMP routes
      */
     private initRoutes(): void {
         this.app.get('/description.xml', (req, res) => {
@@ -49,10 +44,11 @@ class SEMPServer {
             res.send(this.descriptionXml)
         });
 
-        this.app.get('*', (req, res) => {
-           console.log(req.url);
-           console.log("Requested something...");
-           res.end()
+        // All devices
+        this.app.get('/semp', (req, res) => {
+            console.log("Requested all devices.");
+            let devices: Device2EM = SEMPServer.convertDevices(this.gateway.getAllDevices());
+            res.send(SEMPServer.convertJSToXML(devices))
         });
 
         this.app.post('*', (req, res) => {
@@ -60,6 +56,43 @@ class SEMPServer {
             console.log("Requested something...");
             res.end()
         });
+    }
+
+    private static convertJSToXML(js: any): string{
+        let rawJs = {
+            _declaration: {
+                _attributes: {
+                    version: "1.0",
+                    encoding: "utf-8"
+                }
+            },
+            Device2EM: js
+        };
+        return js2xml(rawJs, {compact: true, spaces: 4});
+    }
+
+    private static convertDevices(devices: Array<Device>): Device2EM {
+        let devInfos: Array<DeviceInfoType> = [];
+        let devStatuses: Array<DeviceStatusType> = [];
+        let devPlanningRequests: Array<PlanningRequestType> = [];
+
+        for (let d of devices) {
+            devInfos.push(d.deviceInfo);
+            devStatuses.push(d.deviceStatus);
+            if (d.planningRequest.Timeframe.length != 0) {
+                devPlanningRequests.push(d.planningRequest)
+            }
+        }
+
+        return {
+            _attributes: {
+                xmlns: "http://www.sma.de/communication/schema/SEMP/v1"
+            },
+            DeviceInfo: devInfos,
+            DeviceStatus: devStatuses,
+            PlanningRequest: devPlanningRequests
+        }
+
     }
 
     /**
@@ -88,11 +121,11 @@ class SEMPServer {
      */
     stop(): Promise<void> {
         return new Promise((resolve, reject) => {
-            if(this.server != null){
+            if (this.server != null) {
                 this.server.close(() => {
                     resolve()
                 })
-            }else{
+            } else {
                 reject()
             }
         })
