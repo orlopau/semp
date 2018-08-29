@@ -25,9 +25,9 @@ class SEMPServer {
      */
     constructor(uuid: string,
                 ipAddress: string,
-                public port: number,
-                public descriptionXml: string,
-                public gateway: Gateway) {
+                private port: number,
+                private descriptionXml: string,
+                private gateway: Gateway) {
 
 
         this.app = express();
