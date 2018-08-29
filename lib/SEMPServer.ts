@@ -8,7 +8,7 @@ import Gateway from "./Gateway";
 import {Server} from "http";
 import Device2EM, {DeviceInfoType, DeviceStatusType, PlanningRequestType} from "./Device2EM";
 import Device from "./Device";
-import {js2xml} from "xml-js";
+import {js2xml, xml2js} from "xml-js";
 
 class SEMPServer {
 
@@ -39,22 +39,34 @@ class SEMPServer {
      */
     private initRoutes(): void {
         this.app.get('/description.xml', (req, res) => {
-            console.log("Requested description!");
             res.set('Content-Type', 'text/xml');
             res.send(this.descriptionXml)
         });
 
         // All devices
-        this.app.get('/semp', (req, res) => {
-            console.log("Requested all devices.");
+        this.app.get('/semp/', (req, res) => {
+            console.log("Requested all devices. " + req.url);
+            console.log(JSON.stringify(req.query));
             let devices: Device2EM = SEMPServer.convertDevices(this.gateway.getAllDevices());
             res.send(SEMPServer.convertJSToXML(devices))
         });
 
-        this.app.post('*', (req, res) => {
-            console.log(req.body);
-            console.log("Requested something...");
+        this.app.get('*', (req, res) => {
+            console.log("GET something...");
+            console.log(req.url);
+            console.log(JSON.stringify(req.query));
             res.end()
+        });
+
+        this.app.post('/semp/', (req, res) => {
+            let body: string = "";
+            req.on("data", (chunk => {
+                body += chunk
+            }));
+            req.on("end", () => {
+                console.log(xml2js(body));
+                res.end()
+            });
         });
     }
 

@@ -89,11 +89,11 @@ class Device {
             DeviceId: this.deviceInfo.Identification.DeviceId,
             EarliestStart: earliestStart,
             LatestEnd: latestEnd,
-            MaxRunningTime: maxRunTime,
-            MinRunningTime: minRunTime
+            MinRunningTime: minRunTime,
+            MaxRunningTime: maxRunTime
         };
 
-        this.planningRequest.Timeframe.push(timeframe)
+        this.planningRequest.Timeframe.push(timeframe);
     }
 
     /**
@@ -126,6 +126,10 @@ class Device {
         this.deviceStatus.PowerConsumption = {
             PowerInfo: [powerInfo]
         }
+    }
+
+    private static timeSecs(): number{
+        return Math.round(new Date().getTime() / 1000)
     }
 }
 

@@ -9,11 +9,11 @@ class Gateway {
 
     private devices: Map<string, Device> = new Map<string, Device>();
 
-    constructor(deviceName: string, uuid: string, ipAddress: string, port: number, friendlyName: string = "SEMP Gateway", manufacturer: string = "OpenSource Gateway") {
-        this.ssdpServer = new SSDPServer("http://" + ipAddress + ":" + port + "/description.xml", uuid);
+    constructor(deviceName: string, uuid: string, ipAddress: string, sempPort: number, restPort: number, friendlyName: string = "SEMP Gateway", manufacturer: string = "OpenSource Gateway") {
+        this.ssdpServer = new SSDPServer("http://" + ipAddress + ":" + sempPort + "/description.xml", uuid);
 
-        let descriptionXml: string = DescriptionGenerator.generateDescription(uuid, "http://" + ipAddress + ":" + port, friendlyName, manufacturer);
-        this.sempServer = new SEMPServer(uuid, ipAddress, port, descriptionXml, this);
+        let descriptionXml: string = DescriptionGenerator.generateDescription(uuid, "http://" + ipAddress + ":" + sempPort, friendlyName, manufacturer);
+        this.sempServer = new SEMPServer(uuid, ipAddress, sempPort, descriptionXml, this);
 
     }
 
@@ -50,13 +50,14 @@ class Gateway {
     /**
      * Retrieves all devices
      */
-    getAllDevices(): Array<Device>{
+    getAllDevices(): Array<Device> {
         let ds: Array<Device> = [];
-        for (let d of this.devices.values()){
+        for (let d of this.devices.values()) {
             ds.push(d)
         }
         return ds
     }
+
 }
 
 export default Gateway
