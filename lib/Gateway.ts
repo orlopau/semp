@@ -2,10 +2,12 @@ import SSDPServer from "./SSDPServer";
 import SEMPServer from "./SEMPServer";
 import DescriptionGenerator from "./DescriptionGenerator";
 import Device from "./Device";
+import Api from "./api/Api";
 
 class Gateway {
     private ssdpServer: SSDPServer;
     private sempServer: SEMPServer;
+    private api: Api;
 
     private devices: Map<string, Device> = new Map<string, Device>();
 
@@ -15,19 +17,27 @@ class Gateway {
         let descriptionXml: string = DescriptionGenerator.generateDescription(uuid, "http://" + ipAddress + ":" + sempPort, friendlyName, manufacturer);
         this.sempServer = new SEMPServer(uuid, ipAddress, sempPort, descriptionXml, this);
 
+        this.api = new Api(restPort, this);
     }
 
-    start(): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this.sempServer.start().then(() => {
-                console.log("SEMP Server started! Starting SSDP Server...");
-                this.ssdpServer.start();
-                resolve();
-            }).catch((err) => {
-                console.log("Error while starting SEMP Server! " + err);
-                reject(err);
-            });
-        })
+    async start(){
+        try{
+            await this.sempServer.start();
+            await this.ssdpServer.start();
+            await this.api.start();
+        }catch (e) {
+            console.log("Error while starting gateway! " + e)
+        }
+    }
+
+    async stop() {
+        try{
+            await this.sempServer.stop();
+            await this.ssdpServer.stop();
+            await this.api.stop();
+        } catch (e) {
+            console.log("Couldnt stop gateway! " + e)
+        }
     }
 
     /**
@@ -56,6 +66,21 @@ class Gateway {
             ds.push(d)
         }
         return ds
+    }
+
+    /**
+     * Deletes device
+     * @param id ID of device
+     */
+    deleteDevice(id: string): boolean {
+        return this.devices.delete(id)
+    }
+
+    /**
+     * Deletes all devices
+     */
+    deleteAllDevices(): void {
+        this.devices.clear()
     }
 
 }

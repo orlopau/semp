@@ -6,6 +6,7 @@ class Device {
     public planningRequest: PlanningRequestType = {
         Timeframe: []
     };
+    public hookURL?: string;
 
     /**
      * Creates new device
@@ -48,13 +49,13 @@ class Device {
             }
         };
 
-        if(url != null){
+        if (url) {
             this.deviceInfo.Identification.DeviceURL = url
         }
-        if(minOnTime){
+        if (minOnTime) {
             this.deviceInfo.Characteristics.MinOnTime = minOnTime
         }
-        if(minOffTime){
+        if (minOffTime) {
             this.deviceInfo.Characteristics.MinOffTime = minOffTime
         }
 
@@ -72,15 +73,14 @@ class Device {
      * @param latestEnd relative time from now that the operation has to be finished in seconds
      * @param minRunTime minimum runtime in seconds
      * @param maxRunTime maximum runtime in seconds
-     * @throws
      */
     addPlanningRequest(earliestStart: number, latestEnd: number, minRunTime: number, maxRunTime: number): void {
-        if(minRunTime > maxRunTime){
+        if (minRunTime > maxRunTime) {
             throw Error("Min run time cant be greater than max run time!");
         }
 
-        for (let frame of this.planningRequest.Timeframe){
-            if(latestEnd < frame.LatestEnd && latestEnd > frame.EarliestStart || earliestStart < frame.LatestEnd && earliestStart > frame.EarliestStart){
+        for (let frame of this.planningRequest.Timeframe) {
+            if (latestEnd < frame.LatestEnd && latestEnd > frame.EarliestStart || earliestStart < frame.LatestEnd && earliestStart > frame.EarliestStart) {
                 throw Error("Overlapping timefres arent valid!")
             }
         }
@@ -101,6 +101,10 @@ class Device {
      */
     clearPlanningRequests(): void {
         this.planningRequest.Timeframe = []
+    }
+
+    getPlanningRequests(): TimeframeType[]{
+        return this.planningRequest.Timeframe
     }
 
     /**
@@ -128,7 +132,7 @@ class Device {
         }
     }
 
-    private static timeSecs(): number{
+    private static timeSecs(): number {
         return Math.round(new Date().getTime() / 1000)
     }
 }

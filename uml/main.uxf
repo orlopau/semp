@@ -4,8 +4,8 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>708</x>
-      <y>564</y>
+      <x>372</x>
+      <y>696</y>
       <w>120</w>
       <h>84</h>
     </coordinates>
@@ -15,8 +15,8 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>972</x>
-      <y>540</y>
+      <x>636</x>
+      <y>672</y>
       <w>120</w>
       <h>36</h>
     </coordinates>
@@ -26,8 +26,8 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>972</x>
-      <y>600</y>
+      <x>636</x>
+      <y>732</y>
       <w>120</w>
       <h>36</h>
     </coordinates>
@@ -37,8 +37,8 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>648</x>
-      <y>756</y>
+      <x>312</x>
+      <y>888</y>
       <w>264</w>
       <h>72</h>
     </coordinates>
@@ -51,8 +51,8 @@ _+generateDescription: String_
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>756</x>
-      <y>636</y>
+      <x>420</x>
+      <y>768</y>
       <w>96</w>
       <h>144</h>
     </coordinates>
@@ -63,8 +63,8 @@ _+generateDescription: String_
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>816</x>
-      <y>540</y>
+      <x>480</x>
+      <y>672</y>
       <w>180</w>
       <h>72</h>
     </coordinates>
@@ -74,8 +74,8 @@ _+generateDescription: String_
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>816</x>
-      <y>612</y>
+      <x>480</x>
+      <y>744</y>
       <w>180</w>
       <h>36</h>
     </coordinates>
@@ -85,8 +85,8 @@ _+generateDescription: String_
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>708</x>
-      <y>432</y>
+      <x>372</x>
+      <y>564</y>
       <w>120</w>
       <h>36</h>
     </coordinates>
@@ -97,8 +97,8 @@ _+generateDescription: String_
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>564</x>
-      <y>588</y>
+      <x>228</x>
+      <y>720</y>
       <w>168</w>
       <h>48</h>
     </coordinates>
@@ -109,8 +109,8 @@ m2=0...*</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>456</x>
-      <y>588</y>
+      <x>120</x>
+      <y>720</y>
       <w>120</w>
       <h>36</h>
     </coordinates>
@@ -120,8 +120,8 @@ m2=0...*</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>672</x>
-      <y>276</y>
+      <x>336</x>
+      <y>408</y>
       <w>192</w>
       <h>60</h>
     </coordinates>
@@ -133,8 +133,8 @@ m2=0...*</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>756</x>
-      <y>324</y>
+      <x>420</x>
+      <y>456</y>
       <w>108</w>
       <h>132</h>
     </coordinates>
@@ -146,8 +146,8 @@ m2=0...*</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>672</x>
-      <y>96</y>
+      <x>336</x>
+      <y>228</y>
       <w>192</w>
       <h>96</h>
     </coordinates>
@@ -161,8 +161,8 @@ m2=0...*</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>756</x>
-      <y>180</y>
+      <x>420</x>
+      <y>312</y>
       <w>132</w>
       <h>120</h>
     </coordinates>
@@ -174,8 +174,8 @@ m2=0...*</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>756</x>
-      <y>456</y>
+      <x>420</x>
+      <y>588</y>
       <w>36</w>
       <h>132</h>
     </coordinates>
@@ -183,5 +183,60 @@ m2=0...*</panel_attributes>
 m1=1
 m2=1</panel_attributes>
     <additional_attributes>10.0;10.0;10.0;90.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>708</x>
+      <y>228</y>
+      <w>180</w>
+      <h>84</h>
+    </coordinates>
+    <panel_attributes>PlanningRequests
+--
+&lt;&lt;GET&gt;&gt; get()
+&lt;&lt;DELETE&gt;&gt; delete()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>516</x>
+      <y>240</y>
+      <w>216</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;.
+&lt;&lt;Path&gt;&gt;
+/planningRequests</panel_attributes>
+    <additional_attributes>160.0;20.0;10.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1068</x>
+      <y>228</y>
+      <w>180</w>
+      <h>96</h>
+    </coordinates>
+    <panel_attributes>PlanningRequests
+--
+&lt;&lt;GET&gt;&gt; get()
+&lt;&lt;DELETE&gt;&gt; delete()
+&lt;&lt;POST&gt;&gt; add()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>876</x>
+      <y>240</y>
+      <w>216</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;.
+&lt;&lt;Path&gt;&gt;
+/{id}</panel_attributes>
+    <additional_attributes>160.0;20.0;10.0;20.0</additional_attributes>
   </element>
 </diagram>
