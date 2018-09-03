@@ -129,7 +129,7 @@ describe("API", () => {
                 absoluteTimestamps: false
             };
 
-            let res = await chai.request(url).post("/devices/1234").send({device: params});
+            let res = await chai.request(url).put("/devices/1234").send({device: params});
             expect(res.status).to.equal(200);
 
             expect(gateway.getAllDevices().length).to.equal(1);
@@ -153,7 +153,7 @@ describe("API", () => {
                 absoluteTimestamps: false
             };
 
-            let res = await chai.request(url).post("/devices/1234").send({device: params});
+            let res = await chai.request(url).put("/devices/1234").send({device: params});
             expect(res.status).to.equal(200);
             // @ts-ignore
             expect(gateway.getDevice("1234").deviceInfo.Identification.DeviceName).equal("TestReplaced")

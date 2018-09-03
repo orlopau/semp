@@ -18,6 +18,17 @@ class Api {
     }
 
     private initRoutes(): void {
+        this.router.param('id', (req, res, next, id) => {
+            let d = this.gateway.getDevice(id);
+            if (d || req.method == "PUT") {
+                req.params.device = d;
+                return next()
+            } else {
+                res.status(404);
+                res.json(util.createResponse(404, "Device not found"))
+            }
+        });
+
         // All devices
         this.router.get("/devices", (req, res) => {
             let devices = this.gateway.getAllDevices();
@@ -26,31 +37,21 @@ class Api {
 
         // Single device
         this.router.route("/devices/:id").get((req, res) => {
-            let device = this.gateway.getDevice(req.params.id);
-            if(device){
-                res.json(util.createResponse(200, "OK", util.device2RESTDevice(device)))
-            }else{
-                res.status(404);
-                res.json(util.createResponse(404, "Device not found"));
-            }
+            res.json(util.createResponse(200, "OK", util.device2RESTDevice(req.params.device)))
         }).delete((req, res) => {
-            if(this.gateway.deleteDevice(req.params.id)){
-                res.json(util.createResponse(200, "OK"))
-            }else{
-                res.status(404);
-                res.json(util.createResponse(404, "Device not found"))
-            }
-        }).post((req, res) => {
+            this.gateway.deleteDevice(req.params.id);
+            res.json(util.createResponse(200, "OK"))
+        }).put((req, res) => {
             let d: Device;
 
-            try{
+            try {
                 let b = req.body.device;
                 d = new Device(b.deviceId, b.name, b.type, b.measurementMethod, b.interruptionsAllowed, b.maxPower,
                     b.emSignalsAccepted, b.status, b.vendor, b.serialNr, b.absoluteTimestamps, b.optionalEnergy, b.minOnTime,
                     b.minOffTime, b.url);
                 this.gateway.setDevice(b.deviceId, d);
                 res.json(util.createResponse(200, "OK"))
-            }catch(e){
+            } catch (e) {
                 res.status(400);
                 res.json(util.createResponse(400, "Device couldnt be created. " + e))
             }
@@ -59,35 +60,17 @@ class Api {
 
         // All planning requests
         this.router.route("/devices/:id/planningRequests").get((req, res) => {
-            let d = this.gateway.getDevice(req.params.id);
-            if(d){
-                res.json(util.createResponse(200, "OK", d.getPlanningRequests()))
-            }else{
-                res.status(404);
-                res.json(util.createResponse(404, "Device not found"))
-            }
+            res.json(util.createResponse(200, "OK", req.params.device.getPlanningRequests()))
         }).delete((req, res) => {
-            let d = this.gateway.getDevice(req.params.id);
-            if(d){
-                d.clearPlanningRequests();
-                res.json(util.createResponse(200, "OK"))
-            }else{
-                res.status(404);
-                res.json(util.createResponse(404, "Device not found"))
-            }
+            req.params.device.clearPlanningRequests();
+            res.json(util.createResponse(200, "OK"))
         }).post((req, res) => {
             let b = req.body.planning;
-            if(b.EarliestStart != null && b.LatestEnd != null && b.MinRunningTime != null && b.MaxRunningTime != null){
-                let d = this.gateway.getDevice(req.params.id);
-                if(d){
-                    d.addPlanningRequest(b.EarliestStart, b.LatestEnd, b.MinRunningTime, b.MaxRunningTime);
-                    res.status(200);
-                    res.json(util.createResponse(200, "OK"))
-                }else{
-                    res.status(404);
-                    res.json(util.createResponse(404, "Device not found"))
-                }
-            }else{
+            if (b.EarliestStart != null && b.LatestEnd != null && b.MinRunningTime != null && b.MaxRunningTime != null) {
+                req.params.device.addPlanningRequest(b.EarliestStart, b.LatestEnd, b.MinRunningTime, b.MaxRunningTime);
+                res.status(200);
+                res.json(util.createResponse(200, "OK"))
+            } else {
                 res.status(400);
                 res.json(util.createResponse(400, "Wrong parameters"))
             }
@@ -95,29 +78,16 @@ class Api {
 
         // Hooks
         this.router.route("/devices/:id/hook").post((req, res) => {
-            let d = this.gateway.getDevice(req.params.id);
-            console.log(req.params.id);
-            if(d){
-                if(req.body.hookURL) {
-                    d.hookURL = req.body.hookURL;
-                    res.json(util.createResponse(200, "OK"))
-                } else {
-                    res.status(400);
-                    res.json(util.createResponse(400, "HookURL not specified"))
-                }
-            }else{
-                res.status(404);
-                res.json(util.createResponse(404, "Device not found"))
+            if (req.body.hookURL) {
+                req.params.device.hookURL = req.body.hookURL;
+                res.json(util.createResponse(200, "OK"))
+            } else {
+                res.status(400);
+                res.json(util.createResponse(400, "HookURL not specified"))
             }
         }).delete((req, res) => {
-            let d = this.gateway.getDevice(req.params.id);
-            if(d){
-                d.hookURL = undefined;
-                res.json(util.createResponse(200, "OK"))
-            }else{
-                res.status(404);
-                res.json(util.createResponse(404, "Device not found"))
-            }
+            req.params.device.hookURL = undefined;
+            res.json(util.createResponse(200, "OK"))
         });
 
         this.router.route("*").all((req, res) => {
