@@ -207,6 +207,68 @@ describe("API", () => {
             let res = await chai.request(url).del("/devices/1214212434/planningRequests");
             expect(res.status).equal(404);
         });
+    });
+
+    describe("GET /devices/:id/planningRequests", () => {
+        it("Should get all plannings", async () => {
+            gateway.setDevice("1234", device1);
+            // @ts-ignore
+            gateway.getDevice("1234").addPlanningRequest(0, 600, 10, 60);
+            let res = await chai.request(url).get("/devices/1234/planningRequests");
+            expect(res.body.data).to.deep.equal(device1.getPlanningRequests())
+        });
+
+        it("Should return empty list", async () => {
+            gateway.setDevice("1234", device1);
+            let res = await chai.request(url).get("/devices/1234/planningRequests");
+            expect(res.body.data).to.have.length(0)
+        })
+    });
+
+    describe("POST /devices/:id/planningRequests", () => {
+       it("Should add a planning", async () => {
+           gateway.setDevice("1234", device1);
+
+           let params = {
+               planning: {
+                   EarliestStart: 0,
+                   LatestEnd: 600,
+                   MinRunningTime: 10,
+                   MaxRunningTime: 60
+               }
+           };
+           let res = await chai.request(url).post("/devices/1234/planningRequests").send(params);
+           expect(res.status).equal(200);
+           // @ts-ignore
+           expect(gateway.getDevice("1234").getPlanningRequests()).to.have.length(1);
+           // @ts-ignore
+           let probe = gateway.getDevice("1234").getPlanningRequests()[0];
+           delete probe.DeviceId;
+           expect(probe).to.deep.equal(params.planning);
+       })
+    });
+
+    describe("POST /devices/:id/hook", () => {
+        it("Should register a hook", async () => {
+            gateway.setDevice("1234", device1);
+            let hookURL = "192.158.148.120/test";
+            let res = await chai.request(url).post("/devices/1234/hook").send({hookURL: hookURL});
+            expect(res.status).to.equal(200);
+            // @ts-ignore
+            expect(gateway.getDevice("1234").hookURL).to.equal(hookURL);
+        })
+    });
+
+    describe("DELETE /devices/:id/hook", () => {
+        it("Should delete the hook", async () => {
+            gateway.setDevice("1234", device1);
+            // @ts-ignore
+            gateway.getDevice("1234").hookURL = "something";
+            let res = await chai.request(url).del("/devices/1234/hook");
+            expect(res.status).to.equal(200);
+            // @ts-ignore
+            expect(gateway.getDevice("1234").hookURL).to.equal(undefined);
+        })
     })
 });
 

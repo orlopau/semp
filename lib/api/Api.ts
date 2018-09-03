@@ -76,11 +76,13 @@ class Api {
                 res.json(util.createResponse(404, "Device not found"))
             }
         }).post((req, res) => {
-            let b = req.body;
-            if(b.EarliestStart && b.LatestEnd && b.MinRunningTime && b.MaxRunningTime){
+            let b = req.body.planning;
+            if(b.EarliestStart != null && b.LatestEnd != null && b.MinRunningTime != null && b.MaxRunningTime != null){
                 let d = this.gateway.getDevice(req.params.id);
                 if(d){
-                    d.addPlanningRequest(b.EarliestStart, b.LatestEnd, b.MinRunningTime, b.maxRunningTime)
+                    d.addPlanningRequest(b.EarliestStart, b.LatestEnd, b.MinRunningTime, b.MaxRunningTime);
+                    res.status(200);
+                    res.json(util.createResponse(200, "OK"))
                 }else{
                     res.status(404);
                     res.json(util.createResponse(404, "Device not found"))
@@ -92,8 +94,9 @@ class Api {
         });
 
         // Hooks
-        this.app.post("/devices/:id/hook", (req, res) => {
+        this.router.route("/devices/:id/hook").post((req, res) => {
             let d = this.gateway.getDevice(req.params.id);
+            console.log(req.params.id);
             if(d){
                 if(req.body.hookURL) {
                     d.hookURL = req.body.hookURL;
@@ -106,10 +109,7 @@ class Api {
                 res.status(404);
                 res.json(util.createResponse(404, "Device not found"))
             }
-        });
-
-
-        this.app.delete("/devices/:id/hook", (req, res) => {
+        }).delete((req, res) => {
             let d = this.gateway.getDevice(req.params.id);
             if(d){
                 d.hookURL = undefined;
@@ -118,6 +118,11 @@ class Api {
                 res.status(404);
                 res.json(util.createResponse(404, "Device not found"))
             }
+        });
+
+        this.router.route("*").all((req, res) => {
+            res.status(404);
+            res.json(util.createResponse(404, "Route not found"))
         })
     }
 

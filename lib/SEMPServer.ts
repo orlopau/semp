@@ -64,7 +64,8 @@ class SEMPServer {
                 body += chunk
             }));
             req.on("end", () => {
-                console.log(JSON.stringify(xml2js(body, {compact: true, ignoreDeclaration: true, ignoreDoctype: true, nativeType: true})));
+                let json = xml2js(body, {compact: true, ignoreDeclaration: true, ignoreDoctype: true, nativeType: true});
+                console.log(JSON.stringify(json));
                 res.end()
             });
         });
