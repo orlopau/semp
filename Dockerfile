@@ -3,6 +3,10 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 RUN npm run build
-EXPOSE 8080
-EXPOSE 8081
+ARG semp=9765
+ARG api=9766
+# SEMP Port
+EXPOSE $semp
+# Api Port
+EXPOSE $api
 CMD ["npm", "run", "start"]

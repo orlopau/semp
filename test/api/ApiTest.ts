@@ -113,7 +113,7 @@ describe("API", () => {
         });
     });
 
-    describe("POST /devices/:id", () => {
+    describe("PUT /devices/:id", () => {
         it("Should create a new device", async () => {
             let params = {
                 deviceId: "1234",
