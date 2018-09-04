@@ -7,7 +7,7 @@ import util from "../../lib/api/Util";
 
 const expect = chai.use(chaiHttp).expect;
 const url: string = "http://localhost:8082/api";
-const gateway: Gateway = new Gateway("TestGate", "1234UID", "127.0.0.1", 0, 0);
+const gateway: Gateway = new Gateway("1234UID", "127.0.0.1", 0, 0);
 const api: Api = new Api(8082, gateway);
 
 const device1 = new Device("1234", "Test1", "Dishwasher", "Estimate",

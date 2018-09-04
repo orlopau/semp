@@ -3,7 +3,7 @@ import axios from 'axios'
 import SEMPServer from '../lib/SEMPServer'
 import Gateway from "../lib/Gateway";
 
-const gateway = new Gateway("Gateway", "290B3891-0311-4854-4333-7C70BC802C2D", "192.168.188.101", 9089, 8888);
+const gateway = new Gateway("290B3891-0311-4854-4333-7C70BC802C2D", "192.168.188.101", 9089, 8888);
 
 describe('HttpServer', function () {
     describe('Initiation', function () {
