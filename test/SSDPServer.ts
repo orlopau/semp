@@ -26,7 +26,6 @@ describe("SSDP Server", function(){
             const Client = require('node-ssdp').Client;
             const client = new Client();
             client.on('response', function(headers: any, statusCode: number, info: string){
-                console.log(headers);
                 expect(statusCode).to.equal(200);
             });
             const server = new SSDPServer("http://192.168.188test:8080/semp/description.xml", "f40c2981-7329-40b7-8b04-27f187aecfb5");
