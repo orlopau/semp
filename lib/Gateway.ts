@@ -3,6 +3,7 @@ import SEMPServer from "./SEMPServer";
 import DescriptionGenerator from "./DescriptionGenerator";
 import Device from "./Device";
 import Api from "./api/Api";
+import EM2Device from "./EM2Device";
 
 class Gateway {
     private ssdpServer: SSDPServer;
@@ -20,18 +21,18 @@ class Gateway {
         this.api = new Api(restPort, this);
     }
 
-    async start(){
-        try{
+    async start() {
+        try {
             await this.sempServer.start();
             await this.ssdpServer.start();
             await this.api.start();
-        }catch (e) {
+        } catch (e) {
             console.log("Error while starting gateway! " + e)
         }
     }
 
     async stop() {
-        try{
+        try {
             await this.sempServer.stop();
             await this.ssdpServer.stop();
             await this.api.stop();
@@ -81,6 +82,17 @@ class Gateway {
      */
     deleteAllDevices(): void {
         this.devices.clear()
+    }
+
+    /**
+     * Listener for SEMP messages
+     * @param message Message
+     */
+    onSEMPMessage(message: EM2Device): void {
+        let d = this.getDevice(message.DeviceControl.DeviceId);
+        if(d){
+            d.sendEMRecommendation(message)
+        }
     }
 
 }

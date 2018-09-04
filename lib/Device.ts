@@ -1,4 +1,6 @@
 import {DeviceInfoType, DeviceStatusType, PlanningRequestType, PowerInfoType, TimeframeType} from "./Device2EM";
+import EM2Device from "./EM2Device";
+import axios from 'axios'
 
 class Device {
     public deviceInfo: DeviceInfoType;
@@ -7,6 +9,7 @@ class Device {
         Timeframe: []
     };
     public hookURL?: string;
+    public lastRecommendation?: EM2Device;
 
     /**
      * Creates new device
@@ -103,7 +106,7 @@ class Device {
         this.planningRequest.Timeframe = []
     }
 
-    getPlanningRequests(): TimeframeType[]{
+    getPlanningRequests(): TimeframeType[] {
         return this.planningRequest.Timeframe
     }
 
@@ -116,8 +119,8 @@ class Device {
     setLastPower(watts: number, minPower?: number, maxPower?: number) {
         let powerInfo: PowerInfoType = {
             AveragePower: watts,
-            AveragingInterval: 60,
-            Timestamp: 0
+            Timestamp: 0,
+            AveragingInterval: 60
         };
 
         if (maxPower) {
@@ -129,6 +132,22 @@ class Device {
 
         this.deviceStatus.PowerConsumption = {
             PowerInfo: [powerInfo]
+        };
+
+        if (watts > 0) {
+            this.deviceStatus.Status = "On"
+        } else {
+            this.deviceStatus.Status = "Off"
+        }
+    }
+
+    sendEMRecommendation(em2dev: EM2Device): void {
+        console.log("Send recommendation " + JSON.stringify(em2dev));
+        this.lastRecommendation = em2dev;
+        if(this.hookURL){
+            axios.post(this.hookURL, em2dev).catch((err) => {
+                console.log("Error while sending to hookURL " + err)
+            })
         }
     }
 

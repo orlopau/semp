@@ -9,6 +9,7 @@ import {Server} from "http";
 import Device2EM, {DeviceInfoType, DeviceStatusType, PlanningRequestType} from "./Device2EM";
 import Device from "./Device";
 import {js2xml, xml2js} from "xml-js";
+import EM2Device from './EM2Device'
 
 class SEMPServer {
 
@@ -51,13 +52,6 @@ class SEMPServer {
             res.send(SEMPServer.convertJSToXML(devices))
         });
 
-        this.app.get('*', (req, res) => {
-            console.log("GET something...");
-            console.log(req.url);
-            console.log(JSON.stringify(req.query));
-            res.end()
-        });
-
         this.app.post('/semp/', (req, res) => {
             let body: string = "";
             req.on("data", (chunk => {
@@ -65,13 +59,19 @@ class SEMPServer {
             }));
             req.on("end", () => {
                 let json = xml2js(body, {compact: true, ignoreDeclaration: true, ignoreDoctype: true, nativeType: true});
-                console.log(JSON.stringify(json));
+                this.gateway.onSEMPMessage(SEMPServer.convertEM2Device(json));
                 res.end()
             });
         });
+
+        this.app.all('*', (req, res) => {
+            console.log("Unmatched url... " + req.url);
+            console.log(JSON.stringify(req.query));
+            res.end()
+        });
     }
 
-    private static convertJSToXML(js: any): string{
+    public static convertJSToXML(js: any): string{
         let rawJs = {
             _declaration: {
                 _attributes: {
@@ -84,7 +84,20 @@ class SEMPServer {
         return js2xml(rawJs, {compact: true, spaces: 4});
     }
 
-    private static convertDevices(devices: Array<Device>): Device2EM {
+    public static convertEM2Device(em2dev: any): EM2Device{
+        em2dev = em2dev.EM2Device;
+
+        return {
+            DeviceControl: {
+                DeviceId: em2dev.DeviceControl.DeviceId._text,
+                On: em2dev.DeviceControl.On._text,
+                RecommendedPowerConsumption: em2dev.DeviceControl.RecommendedPowerConsumption._text,
+                Timestamp: em2dev.DeviceControl.Timestamp._text
+            }
+        }
+    }
+
+    public static convertDevices(devices: Array<Device>): Device2EM {
         let devInfos: Array<DeviceInfoType> = [];
         let devStatuses: Array<DeviceStatusType> = [];
         let devPlanningRequests: Array<PlanningRequestType> = [];

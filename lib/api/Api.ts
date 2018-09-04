@@ -90,6 +90,16 @@ class Api {
             res.json(util.createResponse(200, "OK"))
         });
 
+        this.router.route("/devices/:id/recommendation").get((req, res) => {
+           let recommendation = req.params.device.lastRecommendation;
+           if(recommendation){
+               res.json(util.createResponse(200, "OK", recommendation))
+           }else{
+               res.status(404);
+               res.json(util.createResponse(404, "No recommendation for device found"))
+           }
+        });
+
         this.router.route("*").all((req, res) => {
             res.status(404);
             res.json(util.createResponse(404, "Route not found"))
