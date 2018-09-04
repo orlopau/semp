@@ -2,7 +2,7 @@ import Gateway from "./lib/Gateway";
 import Device from "./lib/Device";
 import Api from "./lib/api/Api";
 
-const gateway = new Gateway("Gateway", "290B3891-0311-4854-4333-7C70BC802C2D", "192.168.188.101", 9089, 9090);
+const gateway = new Gateway("290B3891-0311-4854-4333-7C70BC802C2D", "192.168.188.101", 9089, 9090);
 
 let dev1 = new Device("F-11223344-112235889566-00", "Test", "DishWasher", "None", true,
     1000, true, "Off", "Washer", "1", false,

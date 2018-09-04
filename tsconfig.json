@@ -11,6 +11,7 @@
   "include": [
     "lib",
     "lib/api",
-    "index.ts"
+    "index.ts",
+    "server.ts"
   ]
 }

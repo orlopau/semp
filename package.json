@@ -1,13 +1,15 @@
 {
-  "name": "semp",
+  "name": "semp2rest",
   "version": "1.0.0",
   "description": "Implementation of the SMA SEMP protocol.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "mocha --require ts-node/register --recursive ./test/*.ts ./test/**/*.ts",
+    "prepublish": "npm run build",
     "build": "tsc",
-    "example": "ts-node example.ts"
+    "example": "ts-node example.ts",
+    "start": "node ./dist/server.js"
   },
   "repository": {
     "type": "git",

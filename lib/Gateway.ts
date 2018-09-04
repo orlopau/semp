@@ -12,7 +12,7 @@ class Gateway {
 
     private devices: Map<string, Device> = new Map<string, Device>();
 
-    constructor(deviceName: string, uuid: string, ipAddress: string, sempPort: number, restPort: number, friendlyName: string = "SEMP Gateway", manufacturer: string = "OpenSource Gateway") {
+    constructor(uuid: string, ipAddress: string, sempPort: number, restPort: number, friendlyName: string = "SEMP Gateway", manufacturer: string = "OpenSource Gateway") {
         this.ssdpServer = new SSDPServer("http://" + ipAddress + ":" + sempPort + "/description.xml", uuid);
 
         let descriptionXml: string = DescriptionGenerator.generateDescription(uuid, "http://" + ipAddress + ":" + sempPort, friendlyName, manufacturer);
