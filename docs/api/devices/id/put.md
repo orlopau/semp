@@ -1,6 +1,6 @@
-**Registers a new device**
+**Updates a device**
 ----
-Registers or replaces a new device on the gateway with given parameters.
+Updates device with given parameters.
 
 * **URL**
 
@@ -21,21 +21,14 @@ Registers or replaces a new device on the gateway with given parameters.
     ```
        {
            device: {
-               deviceId: string,
-               name: string,
-               type: string,
-               measurementMethod: string,
-               interruptionsAllowed: boolean,
-               maxPower: number,
-               emSignalsAccepted: boolean,
-               status: string,
-               vendor: string,
-               serialNr: string,
-               absoluteTimestamps: boolean,
-               optionalEnergy: boolean,
+               name?: string,
+               interruptionsAllowed?: boolean,
+               maxPower?: number,
+               emSignalsAccepted?: boolean,
+               status?: string,
+               optionalEnergy?: boolean,
                minOnTime?: number,
                minOffTime?: number,
-               url?: string
            }
        }  
      ``` 

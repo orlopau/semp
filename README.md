@@ -6,9 +6,10 @@ Documentation for the specific functionality of parameters can be found on [SMAs
 under SEMP.
 ---
 * [Get devices](./docs/api/devices/get.md): `GET /api/devices`
+* [Create device](./docs/api/devices/post.md): `POST /api/devices`
 ---
 * [Get device](./docs/api/devices/id/get.md): `GET /api/devices/:id`
-* [Add device](./docs/api/devices/id/put.md): `PUT /api/devices/:id`
+* [Update device](./docs/api/devices/id/put.md): `PUT /api/devices/:id`
 * [Delete device](./docs/api/devices/id/delete.md): `DELETE /api/devices/:id`
 ---
 * [Set hook url](./docs/api/devices/id/hook/post.md): `POST /api/devices/:id/hook`

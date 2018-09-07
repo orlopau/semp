@@ -21,7 +21,7 @@ class Api {
     private initRoutes(): void {
         this.router.param('id', (req, res, next, id) => {
             let d = this.gateway.getDevice(id);
-            if (d || req.method == "PUT") {
+            if (d) {
                 req.params.device = d;
                 return next()
             } else {
@@ -31,9 +31,29 @@ class Api {
         });
 
         // All devices
-        this.router.get("/devices", (req, res) => {
+        this.router.route("/devices").get((req, res) => {
             let devices = this.gateway.getAllDevices();
             res.json(util.createResponse(200, "OK", devices.map(d => util.device2RESTDevice(d))));
+        }).post((req, res) => {
+            try {
+                let b = req.body.device;
+
+                let oldDevice = this.gateway.getDevice(b.deviceId);
+                if(oldDevice){
+                    res.status(405);
+                    return res.json(util.createResponse(405, "Device already exists. Use update request."))
+                }
+
+                let d = new Device(b.deviceId, b.name, b.type, b.measurementMethod, b.interruptionsAllowed, b.maxPower,
+                    b.emSignalsAccepted, b.status, b.vendor, b.serialNr, b.absoluteTimestamps, b.optionalEnergy, b.minOnTime,
+                    b.minOffTime, b.url);
+                this.gateway.setDevice(b.deviceId, d);
+                res.json(util.createResponse(200, "OK"))
+            } catch (e) {
+                res.status(400);
+                res.json(util.createResponse(400, "Device couldnt be created. " + e))
+            }
+
         });
 
         // Single device
@@ -43,26 +63,43 @@ class Api {
             this.gateway.deleteDevice(req.params.id);
             res.json(util.createResponse(200, "OK"))
         }).put((req, res) => {
-            let d: Device;
-
             try {
                 let b = req.body.device;
+                let device: Device = req.params.device;
 
-                // Carry over planning requests
-                let oldDevice = this.gateway.getDevice(b.deviceId);
-                let timeframes: TimeframeType[] = [];
-                if(oldDevice){
-                    timeframes = oldDevice.planningRequest.Timeframe
+                if(b.name != undefined){
+                    device.deviceInfo.Identification.DeviceName = b.name
                 }
-                d = new Device(b.deviceId, b.name, b.type, b.measurementMethod, b.interruptionsAllowed, b.maxPower,
-                    b.emSignalsAccepted, b.status, b.vendor, b.serialNr, b.absoluteTimestamps, b.optionalEnergy, b.minOnTime,
-                    b.minOffTime, b.url);
-                d.planningRequest.Timeframe = timeframes;
-                this.gateway.setDevice(b.deviceId, d);
+                if(b.interruptionsAllowed != undefined){
+                    device.deviceInfo.Capabilities.Interruptions = {
+                        InterruptionsAllowed: b.interruptionsAllowed
+                    }
+                }
+                if(b.maxPower != undefined){
+                    device.deviceInfo.Characteristics.MaxPowerConsumption = b.maxPower
+                }
+                if(b.emSignalsAccepted != undefined){
+                    device.deviceStatus.EMSignalsAccepted = b.emSignalsAccepted
+                }
+                if(b.status != undefined){
+                    device.deviceStatus.Status = b.status
+                }
+                if(b.optionalEnergy != undefined){
+                    device.deviceInfo.Capabilities.Requests = {
+                        OptionalEnergy: b.optionalEnergy
+                    }
+                }
+                if(b.minOnTime != undefined){
+                    device.deviceInfo.Characteristics.MinOnTime = b.minOnTime
+                }
+                if(b.minOffTime != undefined){
+                    device.deviceInfo.Characteristics.MinOffTime = b.minOffTime
+                }
+
                 res.json(util.createResponse(200, "OK"))
             } catch (e) {
                 res.status(400);
-                res.json(util.createResponse(400, "Device couldnt be created. " + e))
+                res.json(util.createResponse(400, "Device couldnt be updated. " + e))
             }
         });
 

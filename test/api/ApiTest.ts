@@ -66,6 +66,47 @@ describe("API", () => {
         })
     });
 
+    describe("POST /devices", () => {
+        it("Should create a new device and not create another one with same id", async () => {
+            let params = {
+                deviceId: "1234",
+                name: "Test1",
+                type: "Dishwasher",
+                measurementMethod: "Estimate",
+                interruptionsAllowed: true,
+                maxPower: 1000,
+                emSignalsAccepted: true,
+                status: "Off",
+                vendor: "Tendor",
+                serialNr: "1Serial",
+                absoluteTimestamps: false
+            };
+
+            let res = await chai.request(url).post("/devices").send({device: params});
+            expect(res.status).to.equal(200);
+
+            expect(gateway.getAllDevices().length).to.equal(1);
+            // @ts-ignore
+            expect(util.device2RESTDevice(gateway.getDevice("1234"))).to.have.any.keys(Object.keys(params));
+
+            let res1 = await chai.request(url).post("/devices").send({device: params});
+            expect(res1.status).to.equal(405);
+            // @ts-ignore
+            expect(util.device2RESTDevice(gateway.getDevice("1234"))).to.have.any.keys(Object.keys(params));
+        })
+    });
+
+    describe("PUT /devices/:id", () => {
+        it("Should update device", async () => {
+            gateway.setDevice("1234", device1);
+
+            let res = await chai.request(url).put("/devices/1234").send({device: {status: "On"}});
+            expect(res.status).to.equal(200);
+            // @ts-ignore
+            expect(gateway.getDevice("1234").deviceStatus.Status).to.equal("On");
+        })
+    });
+
     describe("GET /devices/:id", () => {
         it("Should return 404", async () => {
             let res = await chai.request(url).get("/devices/215415141");
@@ -111,53 +152,6 @@ describe("API", () => {
             expect(res.status).to.equal(404);
             expect(gateway.getAllDevices().length).to.equal(1)
         });
-    });
-
-    describe("PUT /devices/:id", () => {
-        it("Should create a new device", async () => {
-            let params = {
-                deviceId: "1234",
-                name: "Test1",
-                type: "Dishwasher",
-                measurementMethod: "Estimate",
-                interruptionsAllowed: true,
-                maxPower: 1000,
-                emSignalsAccepted: true,
-                status: "Off",
-                vendor: "Tendor",
-                serialNr: "1Serial",
-                absoluteTimestamps: false
-            };
-
-            let res = await chai.request(url).put("/devices/1234").send({device: params});
-            expect(res.status).to.equal(200);
-
-            expect(gateway.getAllDevices().length).to.equal(1);
-            // @ts-ignore
-            expect(util.device2RESTDevice(gateway.getDevice("1234"))).to.have.any.keys(Object.keys(params))
-        });
-
-        it("Should replace device", async () => {
-            gateway.setDevice("1234", device1);
-            let params = {
-                deviceId: "1234",
-                name: "TestReplaced",
-                type: "Dishwasher",
-                measurementMethod: "Estimate",
-                interruptionsAllowed: true,
-                maxPower: 1000,
-                emSignalsAccepted: true,
-                status: "Off",
-                vendor: "Tendor",
-                serialNr: "1Serial",
-                absoluteTimestamps: false
-            };
-
-            let res = await chai.request(url).put("/devices/1234").send({device: params});
-            expect(res.status).to.equal(200);
-            // @ts-ignore
-            expect(gateway.getDevice("1234").deviceInfo.Identification.DeviceName).equal("TestReplaced")
-        })
     });
 
     describe("GET /devices/:id/planningRequests", () => {
