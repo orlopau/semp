@@ -3,6 +3,7 @@ import Gateway from "../Gateway";
 import {Server} from "http";
 import Device from "../Device";
 import util from './Util'
+import {TimeframeType} from "../Device2EM";
 
 class Api {
     public app: express.Application;
@@ -46,9 +47,17 @@ class Api {
 
             try {
                 let b = req.body.device;
+
+                // Carry over planning requests
+                let oldDevice = this.gateway.getDevice(b.deviceId);
+                let timeframes: TimeframeType[] = [];
+                if(oldDevice){
+                    timeframes = oldDevice.planningRequest.Timeframe
+                }
                 d = new Device(b.deviceId, b.name, b.type, b.measurementMethod, b.interruptionsAllowed, b.maxPower,
                     b.emSignalsAccepted, b.status, b.vendor, b.serialNr, b.absoluteTimestamps, b.optionalEnergy, b.minOnTime,
                     b.minOffTime, b.url);
+                d.planningRequest.Timeframe = timeframes;
                 this.gateway.setDevice(b.deviceId, d);
                 res.json(util.createResponse(200, "OK"))
             } catch (e) {
@@ -99,6 +108,8 @@ class Api {
                res.json(util.createResponse(404, "No recommendation for device found"))
            }
         });
+
+        this.router.route("/devices/:id/lastPower")
 
         this.router.route("*").all((req, res) => {
             res.status(404);
