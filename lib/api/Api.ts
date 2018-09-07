@@ -39,7 +39,7 @@ class Api {
                 let b = req.body.device;
 
                 let oldDevice = this.gateway.getDevice(b.deviceId);
-                if(oldDevice){
+                if (oldDevice) {
                     res.status(405);
                     return res.json(util.createResponse(405, "Device already exists. Use update request."))
                 }
@@ -67,32 +67,32 @@ class Api {
                 let b = req.body.device;
                 let device: Device = req.params.device;
 
-                if(b.name != undefined){
+                if (b.name != undefined) {
                     device.deviceInfo.Identification.DeviceName = b.name
                 }
-                if(b.interruptionsAllowed != undefined){
+                if (b.interruptionsAllowed != undefined) {
                     device.deviceInfo.Capabilities.Interruptions = {
                         InterruptionsAllowed: b.interruptionsAllowed
                     }
                 }
-                if(b.maxPower != undefined){
+                if (b.maxPower != undefined) {
                     device.deviceInfo.Characteristics.MaxPowerConsumption = b.maxPower
                 }
-                if(b.emSignalsAccepted != undefined){
+                if (b.emSignalsAccepted != undefined) {
                     device.deviceStatus.EMSignalsAccepted = b.emSignalsAccepted
                 }
-                if(b.status != undefined){
+                if (b.status != undefined) {
                     device.deviceStatus.Status = b.status
                 }
-                if(b.optionalEnergy != undefined){
+                if (b.optionalEnergy != undefined) {
                     device.deviceInfo.Capabilities.Requests = {
                         OptionalEnergy: b.optionalEnergy
                     }
                 }
-                if(b.minOnTime != undefined){
+                if (b.minOnTime != undefined) {
                     device.deviceInfo.Characteristics.MinOnTime = b.minOnTime
                 }
-                if(b.minOffTime != undefined){
+                if (b.minOffTime != undefined) {
                     device.deviceInfo.Characteristics.MinOffTime = b.minOffTime
                 }
 
@@ -137,16 +137,27 @@ class Api {
         });
 
         this.router.route("/devices/:id/recommendation").get((req, res) => {
-           let recommendation = req.params.device.lastRecommendation;
-           if(recommendation){
-               res.json(util.createResponse(200, "OK", recommendation))
-           }else{
-               res.status(404);
-               res.json(util.createResponse(404, "No recommendation for device found"))
-           }
+            let recommendation = req.params.device.lastRecommendation;
+            if (recommendation) {
+                res.json(util.createResponse(200, "OK", recommendation))
+            } else {
+                res.status(404);
+                res.json(util.createResponse(404, "No recommendation for device found"))
+            }
         });
 
-        this.router.route("/devices/:id/lastPower")
+        this.router.route("/devices/:id/lastPower").put((req, res) => {
+            try{
+                let data = req.body.power;
+                let device: Device = req.params.device;
+
+                device.setLastPower(data.Watts, data.MinPower, data.MaxPower);
+                res.json(util.createResponse(200, "OK"))
+            }catch(e){
+                res.status(400);
+                res.json(util.createResponse(400, "Error " + e))
+            }
+        });
 
         this.router.route("*").all((req, res) => {
             res.status(404);

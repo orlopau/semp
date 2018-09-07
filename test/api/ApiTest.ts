@@ -263,6 +263,36 @@ describe("API", () => {
             // @ts-ignore
             expect(gateway.getDevice("1234").hookURL).to.equal(undefined);
         })
+    });
+
+    describe("POST /devices/:id/lastPower", () => {
+        it("Should set last power without min, max", async () => {
+            gateway.setDevice("1234", device1);
+
+            let res = await chai.request(url).put("/devices/1234/lastPower").send({power: {Watts: 500}});
+            expect(res.status).to.equal(200);
+            // @ts-ignore
+            expect(gateway.getDevice("1234").deviceStatus.PowerConsumption.PowerInfo.length).to.equal(1);
+            // @ts-ignore
+            expect(gateway.getDevice("1234").deviceStatus.PowerConsumption.PowerInfo[0].AveragePower).to.equal(500);
+            // @ts-ignore
+            expect(gateway.getDevice("1234").deviceStatus.PowerConsumption.PowerInfo[0].MaxPower).to.equal(undefined);
+        });
+
+        it("Should set last power with min, max", async () => {
+            gateway.setDevice("1234", device1);
+
+            let res = await chai.request(url).put("/devices/1234/lastPower").send({power: {Watts: 500, MinPower: 100, MaxPower: 300}});
+            expect(res.status).to.equal(200);
+            // @ts-ignore
+            expect(gateway.getDevice("1234").deviceStatus.PowerConsumption.PowerInfo.length).to.equal(1);
+            // @ts-ignore
+            expect(gateway.getDevice("1234").deviceStatus.PowerConsumption.PowerInfo[0].AveragePower).to.equal(500);
+            // @ts-ignore
+            expect(gateway.getDevice("1234").deviceStatus.PowerConsumption.PowerInfo[0].MaxPower).to.equal(300);
+            // @ts-ignore
+            expect(gateway.getDevice("1234").deviceStatus.PowerConsumption.PowerInfo[0].MinPower).to.equal(100);
+        });
     })
 });
 

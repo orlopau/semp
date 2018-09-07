@@ -19,6 +19,8 @@ under SEMP.
 * [Add planning request](./docs/api/devices/id/planningRequests/post.md): `POST /api/devices/:id/planningRequests`
 * [Delete all planning requests](./docs/api/devices/id/planningRequests/delete.md): `DELETE /api/devices/:id/planningRequests`
 ---
+* [Update last power](./docs/api/devices/id/lastPower/put.md): `PUT /api/devices/:id/lastPower`
+---
 * [Get recommendation (hook preferred)](./docs/api/devices/id/recommendation/get.md): `GET /api/devices/:id/recommendation`
 
 ## Usage
