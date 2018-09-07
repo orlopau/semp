@@ -1,6 +1,6 @@
 **Registers a new device**
 ----
-Registers a new device on the gateway with given parameters.
+Registers or replaces a new device on the gateway with given parameters.
 
 * **URL**
 
