@@ -134,11 +134,6 @@ class Device {
             PowerInfo: [powerInfo]
         };
 
-        if (watts > 0) {
-            this.deviceStatus.Status = "On"
-        } else {
-            this.deviceStatus.Status = "Off"
-        }
     }
 
     sendEMRecommendation(em2dev: EM2Device): void {
