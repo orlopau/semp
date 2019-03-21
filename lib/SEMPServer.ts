@@ -1,5 +1,5 @@
 /**
- * @fileOverview Generates a SSDP Semp description xml file with parameters.
+ * @fileOverview http server handling SEMP requests
  * @author Paul Orlob
  */
 
