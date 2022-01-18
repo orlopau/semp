@@ -118,16 +118,16 @@ class Device {
      */
     setLastPower(watts: number, minPower?: number, maxPower?: number) {
         let powerInfo: PowerInfoType = {
-            AveragePower: watts,
+            AveragePower: Math.round(watts),
             Timestamp: 0,
             AveragingInterval: 60
         };
 
         if (maxPower) {
-            powerInfo.MaxPower = maxPower
+            powerInfo.MaxPower = Math.round(maxPower);
         }
         if (minPower) {
-            powerInfo.MinPower = minPower;
+            powerInfo.MinPower = Math.round(minPower);
         }
 
         this.deviceStatus.PowerConsumption = {

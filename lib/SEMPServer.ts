@@ -48,7 +48,9 @@ class SEMPServer {
         this.app.get('/semp/', (req, res) => {
             console.log("Requested all devices. " + req.url);
             console.log(JSON.stringify(req.query));
-            let devices: Device2EM = SEMPServer.convertDevices(this.gateway.getAllDevices());
+            let deviceList = this.gateway.getAllDevices()
+            let devices: Device2EM = SEMPServer.convertDevices(deviceList);
+            // console.log(JSON.stringify(deviceList));
             res.send(SEMPServer.convertJSToXML(devices))
         });
 
