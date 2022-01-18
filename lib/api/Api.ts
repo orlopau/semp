@@ -48,6 +48,7 @@ class Api {
                     b.emSignalsAccepted, b.status, b.vendor, b.serialNr, b.absoluteTimestamps, b.optionalEnergy, b.minOnTime,
                     b.minOffTime, b.url);
                 this.gateway.setDevice(b.deviceId, d);
+                console.log("Added device " + b.deviceId);
                 res.json(util.createResponse(200, "OK"))
             } catch (e) {
                 res.status(400);
