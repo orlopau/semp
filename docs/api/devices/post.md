@@ -54,3 +54,5 @@ Creates a new device
 * **Notes:**
 
     Returns 405 if device with same ID already exists.
+    
+    The format of the Device ID is specified in the SEMP documentation provided by SMA, page 22.
