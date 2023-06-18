@@ -1,4 +1,5 @@
 FROM node
+WORKDIR /semp
 COPY package*.json ./
 RUN npm install
 COPY . .
